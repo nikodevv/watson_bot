@@ -6,6 +6,6 @@ class WebhookTest(TestCase):
     def setUpTestData(cls):
         pass
 
-    def test_test_can_fail(self):
-        self.fail("The test fails and hence folder structure is correct")
-
+    def test_webhook_rejects_empty_requests(self):
+        response = self.client.get('webhook_endpoint')
+        self.assertEqual(response.status_code, 400)
