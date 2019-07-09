@@ -5,6 +5,9 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
+def send_message():
+    pass
+
 class FacebookWebookVew(View):
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -15,4 +18,5 @@ class FacebookWebookVew(View):
         msg = data['msg']
         if msg == None or msg == "":
             return HttpResponseBadRequest()
+        send_message()
         return HttpResponse("Success")
