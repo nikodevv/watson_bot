@@ -8,7 +8,7 @@ class MiscTests(TestCase):
         response = self.client.get("admin")
         self.assertEqual(404, response.status_code)
 
-
+# Facebook requests are mocked
 @mock.patch('watson_bot.views.send_message', side_effect=None)
 class WebhookTest(TestCase):
 
