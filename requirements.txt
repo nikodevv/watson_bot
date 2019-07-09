@@ -2,4 +2,4 @@ django
 djangorestframework
 markdown       # Markdown support for the browsable API. (DRF)
 django-filter  # Filtering support (DRF)
-
+requests
