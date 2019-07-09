@@ -5,8 +5,25 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-def send_message():
-    pass
+# In a real project this would probably not be commited to repo.
+VERIFY_TKN = "d1d892cade69e4dc000b6db0d55d93ea734587e04b01bd0c7a" # TODO: Place in config file
+PAGE_ACCESS_TOKEN = ("EAAGGuYZBs8B4BANuAW3Vf0GqDO2xxLZAmRZAls10opZCCTyYkIxD8MW"
+    + "GjAjkuxQtYjVVgTChQs4jYKjCm6LCOl2w3PH7OZChiD71wAyfx3hHzYHwGyDzn6qhu78FAUrkiL"
+    + "y3RtgLm3ETLXkrvurVqMY1ZAhZCv6DLngiTZBEx0aW1QZDZD")
+FACEBOOK_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages"
+
+def send_message(recipient_id, recieved_message):
+    endpoint = f"{FACEBOOK_ENDPOINT}/me/messages?access_token={PAGE_ACCESS_TOKEN}"
+    msg = "TEST MESSAGE"
+    payload = json.dumps(
+        {"recipient":{"id": recipient_id}, "message":{"text": msg}})
+
+    status = requests.post(
+        endpoint, 
+        headers={"Content-Type": "application/json"},
+        data=payload)
+    return status.json()
+
 
 class FacebookWebookVew(View):
     @method_decorator(csrf_exempt)
@@ -19,4 +36,8 @@ class FacebookWebookVew(View):
         if msg == None or msg == "":
             return HttpResponseBadRequest()
         send_message()
+
+        if 'entry' in data:
+            for entry in data['entry']:
+                print(data)
         return HttpResponse("Success")

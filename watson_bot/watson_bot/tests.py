@@ -2,6 +2,7 @@ from django.test import TestCase
 import json
 from unittest import mock
 
+VERIFY_TKN = "d1d892cade69e4dc000b6db0d55d93ea734587e04b01bd0c7a"
 
 class MiscTests(TestCase):
     def test_admin_url_disabled(self):
@@ -14,7 +15,7 @@ class WebhookTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.webhook_endpoint = '/webhook_endpoint/'
+        cls.webhook_endpoint = '/webhook_endpoint/' + VERIFY_TKN + "/"
 
     def test_webhook_rejects_empty_post_requests(self, mock_send_msg):
         empty_request_data = json.dumps({"msg": "", "another_field": ''})
@@ -46,3 +47,5 @@ class WebhookTest(TestCase):
         self.assertEqual(response.status_code, 200)
         mock_send_msg.assert_called_once()
     
+    def test_finish(self, _):
+        self.fail("Finish writing the unit tests after confirming the general idea works with facebook API")
