@@ -5,8 +5,8 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
+# For logging requests
 import logging
-
 logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 # In a real project this would probably not be commited to repo.
@@ -29,30 +29,23 @@ def send_message(recipient_id, recieved_message):
     return status.json()
 
 
-class FacebookWebookVew(View):
+class FacebookWebhookVew(View):
+    @staticmethod
+    def log(request, data):
+        logging.getLogger("djangosyslog").info(request)
+        logging.getLogger("djangosyslog").info(data)
+
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-
-        # if 'entry' in data:
-        #     for entry in data['entry']:
-        #         for message in entry['messaging']:
-        #             if 'message' in message:
-        #                 fb_user_id = message['sender']['id'] # sweet!
-        #                 fb_user_txt = message['message'].get('text')
-        #                 if fb_user_txt:
-        #                     send_message(fb_user_id, fb_user_txt)
-        logging.getLogger("djangosyslog").warning(data)
-        logging.getLogger("djangosyslog").warning("Just logged a post")
-        return HttpResponse()
-        # return HttpResponseBadRequest()
+        FacebookWebhookVew.log(request, data)
+        return HttpResponse("Request returned")
 
     def get(self, request, *args, **kwargs):
-        logging.getLogger("djangosyslog").warning(request)
-        logging.getLogger("djangosyslog").warning("Just logged a get")
+        FacebookWebhookVew.log(request, None)
         return HttpResponse(request.GET.get('hub.challenge'))
 
 class DjangoRunsView(View):
