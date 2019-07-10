@@ -46,11 +46,13 @@ class FacebookWebookVew(View):
         #                 if fb_user_txt:
         #                     send_message(fb_user_id, fb_user_txt)
         logging.getLogger("djangosyslog").warning(data)
+        logging.getLogger("djangosyslog").warning("Just logged a post")
         return HttpResponse("Success")
         # return HttpResponseBadRequest()
 
     def get(self, request, *args, **kwargs):
         logging.getLogger("djangosyslog").warning(request)
+        logging.getLogger("djangosyslog").warning("Just logged a get")
         return HttpResponse("Returning response")
 
 class DjangoRunsView(View):
