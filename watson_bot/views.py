@@ -31,9 +31,8 @@ def send_message(recipient_id, recieved_message):
 
 class FacebookWebhookVew(View):
     @staticmethod
-    def log(request, data):
+    def log(request):
         logging.getLogger("djangosyslog").info(request)
-        logging.getLogger("djangosyslog").info(data)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -41,11 +40,11 @@ class FacebookWebhookVew(View):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        FacebookWebhookVew.log(request, data)
-        return HttpResponse("Request returned")
+        FacebookWebhookVew.log(request)
+        return HttpResponse("EVENT_RECIEVED")
 
     def get(self, request, *args, **kwargs):
-        FacebookWebhookVew.log(request, None)
+        FacebookWebhookVew.log(request)
         return HttpResponse(request.GET.get('hub.challenge'))
 
 class DjangoRunsView(View):
