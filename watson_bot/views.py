@@ -50,9 +50,12 @@ class FacebookWebookVew(View):
         # return HttpResponseBadRequest()
 
     def get(self, request, *args, **kwargs):
-        logging.getLogger("djangosyslog").warning(request.body.decode('utf-8'))
-        if self.request.GET['hub.verify_token'] == VERIFY_TKN:
-            return HttpResponse(self.request.GET['hub.verify_token'])
+        logging.getLogger("djangosyslog").warning(request)
+        try:
+            if self.request.GET['hub.verify_token'] == VERIFY_TKN:
+                return HttpResponse(self.request.GET['hub.verify_token'])
+        except:
+            return
         return HttpResponse("Error, invalid token")
 
 class DjangoRunsView(View):
