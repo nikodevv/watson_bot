@@ -47,13 +47,13 @@ class FacebookWebookVew(View):
         #                     send_message(fb_user_id, fb_user_txt)
         logging.getLogger("djangosyslog").warning(data)
         logging.getLogger("djangosyslog").warning("Just logged a post")
-        return HttpResponse("Success")
+        return HttpResponse()
         # return HttpResponseBadRequest()
 
     def get(self, request, *args, **kwargs):
         logging.getLogger("djangosyslog").warning(request)
         logging.getLogger("djangosyslog").warning("Just logged a get")
-        return HttpResponse("Returning response")
+        return HttpResponse(request.GET.get('hub.challenge'))
 
 class DjangoRunsView(View):
     @method_decorator(csrf_exempt)
