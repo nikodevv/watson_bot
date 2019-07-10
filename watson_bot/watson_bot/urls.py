@@ -21,6 +21,6 @@ VERIFY_TKN = "d1d892cade69e4dc000b6db0d55d93ea734587e04b01bd0c7a"
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    re_path(r'webhook_endpoint/' + VERIFY_TKN, FacebookWebookVew.as_view(), name="webhook"),
+    re_path(r'webhook/' + VERIFY_TKN, FacebookWebookVew.as_view(), name="webhook"),
     re_path('', DjangoRunsView.as_view(), name="homepage"),
 ]
