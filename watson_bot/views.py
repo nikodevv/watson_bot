@@ -51,12 +51,7 @@ class FacebookWebookVew(View):
 
     def get(self, request, *args, **kwargs):
         logging.getLogger("djangosyslog").warning(request)
-        try:
-            if self.request.GET['hub.verify_token'] == VERIFY_TKN:
-                return HttpResponse(self.request.GET['hub.verify_token'])
-        except:
-            return HttpResponse("Error, invalid token")
-        return HttpResponse("Error, invalid token")
+        return HttpResponse("Returning response")
 
 class DjangoRunsView(View):
     @method_decorator(csrf_exempt)
