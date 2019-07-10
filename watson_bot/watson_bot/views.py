@@ -5,6 +5,10 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
+import logging
+
+logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+
 # In a real project this would probably not be commited to repo.
 VERIFY_TKN = "d1d892cade69e4dc000b6db0d55d93ea734587e04b01bd0c7a" # TODO: Place in config file
 PAGE_ACCESS_TOKEN = ("EAAGGuYZBs8B4BANuAW3Vf0GqDO2xxLZAmRZAls10opZCCTyYkIxD8MW"
@@ -32,12 +36,23 @@ class FacebookWebookVew(View):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        msg = data['msg']
-        if msg == None or msg == "":
-            return HttpResponseBadRequest()
-        send_message()
 
-        if 'entry' in data:
-            for entry in data['entry']:
-                print(data)
+        # if 'entry' in data:
+        #     for entry in data['entry']:
+        #         for message in entry['messaging']:
+        #             if 'message' in message:
+        #                 fb_user_id = message['sender']['id'] # sweet!
+        #                 fb_user_txt = message['message'].get('text')
+        #                 if fb_user_txt:
+        #                     send_message(fb_user_id, fb_user_txt)
+        logging.getLogger("djangosyslog").warning(data)
         return HttpResponse("Success")
+        # return HttpResponseBadRequest()
+
+class DjangoRunsView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, requuest, *args, **kwargs):
+        return HttpResponse("App is live.")
