@@ -9,36 +9,28 @@ import time
 from watson_bot.models import Session, Message, Hobby
 from watson_bot.env import (
     FB_VERIFY_TKN, 
-    FB_PAGE_ACCESS_TOKEN, 
     WATSON_FB_ID
     )
 from watson_bot.utilities.watson_interface import WatsonInterface
 
-# CONSTANTS
-FACEBOOK_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages"
-SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
-
 watson = WatsonInterface()
+SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
+FB_PAGE_ACCESS_TOKEN = (
+    "EAAGGuYZBs8B4BACPVaQaJu1tQYjZC2hTDW2PnIlNilB9HGrh87ZBXzbGdUpjK1muwoILz"
+    + "VuPZBT8uZABxXbWMVkMWrifmoITLxd8AXTGhD2PHzZCAwmUpLBN9lGt1lYp3otXl27u0"
+    + "l5TzCUf5Jh1bbhZCMWKrpJUcArJyPMtdqipAZDZD")
 
-
-# UTILITY FUNCTIONS
 def send_message(recipient_id, message):
-    endpoint = f"{FACEBOOK_ENDPOINT}?access_token={FB_PAGE_ACCESS_TOKEN}"
-    payload = json.dumps(
-        {
+    endpoint = f"https://graph.facebook.com/v2.6/me/messages?access_token={FB_PAGE_ACCESS_TOKEN}"
+    payload = json.dumps({
             "messaging_type": "RESPONSE",
             "recipient": { "id": recipient_id },
             "message": { "text": message } 
-            }
-
-        )
-
+            })
     status = requests.post(
         endpoint, 
         headers={"Content-Type": "application/json"},
         data=payload)
-    print("facebook post")
-    print(status.content.decode("utf-8"))
     return status.json()
 
 class FacebookWebhookView(View):
