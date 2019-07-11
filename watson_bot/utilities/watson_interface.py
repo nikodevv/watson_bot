@@ -22,7 +22,6 @@ class WatsonInterface:
             json=data)
         print("WATSON RESPONSE:")
         print(response.content.decode("utf-8"))
-        self.log(response.status_code)
         return json.loads(response.content.decode("utf-8"))["output"]
 
 
