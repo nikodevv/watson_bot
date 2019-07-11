@@ -108,9 +108,9 @@ class WebhookTest(TestCase):
         session.last_renewed = expired_timestamp
         session.id = id
 
-        self.assertTrue(view.should_renew_session(session))
-        session.last_renewed = time.time()
         self.assertFalse(view.should_renew_session(session))
+        session.last_renewed = time.time()
+        self.assertTrue(view.should_renew_session(session))
 
     def test_should_create_message_returns_true_if_sender_is_not_waston(self, *args):
         msg = create_mock_FB_msg(json_string=False)
