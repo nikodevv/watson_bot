@@ -137,7 +137,7 @@ class FacebookWebhookView(View):
     def send_message_to_watson(self, message_txt, session_id):
         session = requests.Session()
         session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
-        data = { "input" : {message_txt} }
+        data = {{ "input" : {message_txt} }}
         response = session.post(
             f'{WATSON_ENDPOINT}/{session_id}/message?{WATSON_API_VER}', 
             headers={"Content-Type": "application/json"},
