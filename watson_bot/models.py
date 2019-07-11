@@ -15,3 +15,15 @@ class Message(models.Model):
     recipient_id = models.TextField()
     timestamp = models.DecimalField(max_digits=13, decimal_places=3)
     text = models.TextField()
+
+
+class Hobby(models.Model):
+
+    created_at = models.DecimalField(max_digits=13, decimal_places=3)
+    user = models.TextField()
+    hobby = models.TextField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'hobby'], name='one_of_each_hobby')
+        ]
