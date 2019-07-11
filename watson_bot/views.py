@@ -157,7 +157,7 @@ class FacebookWebhookView(View):
         print("WATSON RESPONSE:")
         print(response.content.decode("utf-8"))
         self.log(response.status_code)
-        return json.loads(response.content.decode)["output"]
+        return json.loads(response.content.decode("utf-8"))["output"]
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
