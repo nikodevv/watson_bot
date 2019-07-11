@@ -153,6 +153,7 @@ class FacebookWebhookView(View):
 
     def get(self, request, *args, **kwargs):
         self.log(request)
+        print("WHY IS THIS CAlled")
         return HttpResponse(request.GET.get('hub.challenge'))
 
 class DjangoRunsView(View):
