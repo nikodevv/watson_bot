@@ -44,7 +44,6 @@ class MiscTests(TestCase):
 # Facebook requests are mocked
 @mock.patch('watson_bot.views.send_message', side_effect=None)
 @mock.patch('watson_bot.views.WatsonInterface')
-@mock.patch('watson_bot.views.FacebookWebhookView.log', side_effect=None)
 class WebhookTest(TestCase):
 
     @classmethod
@@ -90,7 +89,6 @@ class WebhookTest(TestCase):
 
     def test_create_message_creates_session(
         self, 
-        _, 
         mock_create_session, 
         mock_watson_create_session, 
         *args):

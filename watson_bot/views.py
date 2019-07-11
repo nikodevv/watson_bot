@@ -4,7 +4,6 @@ from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-import logging
 import time
 from watson_bot.models import Session, Message, Hobby
 from watson_bot.env import (
@@ -13,9 +12,6 @@ from watson_bot.env import (
     WATSON_FB_ID
     )
 from watson_bot.utilities.watson_interface import WatsonInterface
-
-# CONFIG
-logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 # CONSTANTS
 FACEBOOK_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages"
@@ -45,8 +41,6 @@ def send_message(recipient_id, message):
     return status.json()
 
 class FacebookWebhookView(View):
-    def log(self, request):
-        logging.getLogger("djangosyslog").info(request)
 
     def save_session(self, session_id):
         timestamp = time.time()
@@ -157,7 +151,6 @@ class FacebookWebhookView(View):
         return HttpResponse("EVENT_RECIEVED")
 
     def get(self, request, *args, **kwargs):
-        self.log(request)
         print("WHY IS THIS CAlled")
         return HttpResponse(request.GET.get('hub.challenge'))
 
