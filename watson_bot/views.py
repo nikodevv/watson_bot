@@ -30,7 +30,12 @@ SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
 def send_message(recipient_id, message):
     endpoint = f"{FACEBOOK_ENDPOINT}/me/messages?access_token={FB_PAGE_ACCESS_TOKEN}"
     payload = json.dumps(
-        {"recipient":{"id": recipient_id}, "message":{"text": message}})
+        {"recipient":
+            { 
+                "messaging_type": "RESPONSE",
+                "id": recipient_id}, 
+                "message": {"text": message} }
+        )
 
     status = requests.post(
         endpoint, 
