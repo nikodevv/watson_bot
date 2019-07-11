@@ -138,7 +138,9 @@ class FacebookWebhookView(View):
         session = requests.Session()
         session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
         data = { "input" : {message_txt} }
-        response = session.post(f'{WATSON_ENDPOINT}/{session_id}/message?{WATSON_API_VER}')
+        response = session.post(
+            f'{WATSON_ENDPOINT}/{session_id}/message?{WATSON_API_VER}', 
+            data=data)
         print("WATSON RESPONSE:")
         self.log(response.status_code)
         return response
