@@ -114,7 +114,7 @@ class FacebookWebhookView(View):
     def save_message(self, facebook_entry, session):
         sender_id = facebook_entry["messaging"][0]["sender"]["id"]
         recipient_id = facebook_entry["messaging"][0]["recipient"]["id"]
-        timestamp = facebook_entry["messaging"][0]["timestamp"]
+        timestamp = round(facebook_entry["messaging"][0]["timestamp"]/1000)
         text = facebook_entry["messaging"][0]["message"]["text"]
         id = facebook_entry["messaging"][0]["message"]["mid"]
 
