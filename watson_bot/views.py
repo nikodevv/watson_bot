@@ -125,7 +125,7 @@ class FacebookWebhookView(View):
 
     def save_watson_response(self, watson_response, sender_id):
         for intent in watson_response["intents"]:
-            if intent["intent"] == "General_About_You" and intent["confidence"] > 0.6:
+            if intent["intent"] == "Share_Hobby" and intent["confidence"] > 0.6:
                 for entity in watson_response["entities"]:
                     if entity["entity"] == "hobby":
                         hobby = Hobby()
