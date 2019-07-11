@@ -41,7 +41,7 @@ def send_message(recipient_id, recieved_message):
 
 class FacebookWebhookView(View):
     def log(self, request):
-        logging.getLogger("djangosyslog").warning(request)
+        logging.getLogger("djangosyslog").info(request)
 
     def save_session(self, session_id):
         timestamp = time.time()
@@ -85,12 +85,12 @@ class FacebookWebhookView(View):
         min_timestamp_before_timeout = time.time() - SESSION_TIMEOUT
         sender_id = self.get_sender_id(facebook_entry)
 
-        logging.getLogger("djangosyslog").warning("2222222")
+        print("2222222")
         recent_msgs = Message.objects.filter(
             timestamp__gt=min_timestamp_before_timeout,
             sender_id__exact=sender_id)
 
-        logging.getLogger("djangosyslog").warning("3333333")
+        print("3333333")
         if (len(recent_msgs) == 0):
             # Create new session
             session_id = json.loads(self.create_session().content.decode('utf-8'))["session_id"]
@@ -106,7 +106,7 @@ class FacebookWebhookView(View):
             self.renew_session(session.id)
 
 
-        logging.getLogger("djangosyslog").warning("4444444")
+        print("4444444")
         message = self.save_message(facebook_entry, session)
         self.send_message_to_watson(message.text, session.session_id)
 
@@ -142,7 +142,7 @@ class FacebookWebhookView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        logging.getLogger("djangosyslog").warning("1111111")
+        print("1111111")
         data = json.loads(request.body.decode('utf-8'))
         self.create_message(data["entry"][0])
         return HttpResponse("EVENT_RECIEVED")
