@@ -92,16 +92,19 @@ class FacebookWebhookView(View):
 
         print("3333333")
         if (len(recent_msgs) == 0):
+            print("CONDDITION 1")
             # Create new session
             session_id = json.loads(self.create_session().content.decode('utf-8'))["session_id"]
             session = self.save_session(session_id)
 
         elif (not self.should_renew_session(recent_msgs[0].session)):
+            print("CONDITION 2")
             # Create new session
             session_id = json.loads(self.create_session().content.decode('utf-8'))["session_id"]
             session = self.save_session(session_id)
         
         else: 
+            print("CONDITION 3")
             session = recent_msgs[0].session
             self.renew_session(session.id)
 
