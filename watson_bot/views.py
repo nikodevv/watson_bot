@@ -105,7 +105,7 @@ class FacebookWebhookView(View):
         else: 
             print("CONDITION 3")
             session = recent_msgs[0].session
-            self.renew_session(session.id)
+            self.renew_session(session.session_id)
 
 
         print("4444444")
