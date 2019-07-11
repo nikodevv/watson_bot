@@ -21,9 +21,9 @@ class Hobby(models.Model):
 
     created_at = models.DecimalField(max_digits=13, decimal_places=3)
     user = models.TextField()
-    hobby = models.TextField()
+    value = models.TextField()
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'hobby'], name='one_of_each_hobby')
+            models.UniqueConstraint(fields=['user', 'value'], name='one_of_each_hobby')
         ]

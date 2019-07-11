@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import logging
 import time
-from watson_bot.models import Session, Message
+from watson_bot.models import Session, Message, Hobby
 from watson_bot.env import (
     FB_VERIFY_TKN, 
     FB_PAGE_ACCESS_TOKEN, 
@@ -27,11 +27,10 @@ SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
 
 
 # UTILITY FUNCTIONS
-def send_message(recipient_id, recieved_message):
+def send_message(recipient_id, message):
     endpoint = f"{FACEBOOK_ENDPOINT}/me/messages?access_token={FB_PAGE_ACCESS_TOKEN}"
-    msg = "TEST MESSAGE"
     payload = json.dumps(
-        {"recipient":{"id": recipient_id}, "message":{"text": msg}})
+        {"recipient":{"id": recipient_id}, "message":{"text": message}})
 
     status = requests.post(
         endpoint, 
@@ -111,8 +110,21 @@ class FacebookWebhookView(View):
 
         print("4444444")
         message = self.save_message(facebook_entry, session)
-        self.send_message_to_watson(message.text, session.session_id)
+        watson_response = self.send_message_to_watson(message.text, session.session_id)
+        self.save_watson_response(watson_response, sender_id)
+        send_message(sender_id, watson_response["generic"][0]["text"])
 
+
+    def save_watson_response(self, watson_response, sender_id):
+        for intent in watson_response["intents"]:
+            if intent["intent"] == "General_About_You" and intent["confidence"] > 0.6:
+                for entity in watson_response["entities"]:
+                    if entity["entity"] == "hobby":
+                        hobby = Hobby()
+                        hobby.created_at = time.time()
+                        hobby.user = sender_id
+                        hobby.value = entity["value"]
+                        hobby.save()
 
     def save_message(self, facebook_entry, session):
         sender_id = facebook_entry["messaging"][0]["sender"]["id"]
@@ -145,7 +157,7 @@ class FacebookWebhookView(View):
         print("WATSON RESPONSE:")
         print(response.content.decode("utf-8"))
         self.log(response.status_code)
-        return response
+        return json.loads(response.content.decode)["output"]
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
