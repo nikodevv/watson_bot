@@ -152,8 +152,6 @@ class FacebookWebhookView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        print("1111111")
-        print(request.body.decode("utf-8"))
         data = request.body.decode('utf-8')
         if (data == None or data == ""):
             return HttpResponse("EVENT_RECIEVED")

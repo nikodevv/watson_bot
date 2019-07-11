@@ -43,7 +43,6 @@ class MiscTests(TestCase):
 
 # Facebook requests are mocked
 @mock.patch('watson_bot.views.send_message', side_effect=None)
-@mock.patch('watson_bot.views.FacebookWebhookView.create_watson_session', side_effect=None)
 @mock.patch('watson_bot.views.FacebookWebhookView.create_session', return_value="uniqueSessionId", side_effect=None)
 @mock.patch('watson_bot.views.FacebookWebhookView.log', side_effect=None)
 class WebhookTest(TestCase):
@@ -52,30 +51,11 @@ class WebhookTest(TestCase):
     def setUpTestData(cls):
         cls.webhook_endpoint = '/webhook?hub.verify_token=' + FB_VERIFY_TKN
 
-    def test_post_requests_are_logged(self, mock_log, *args):
-        mock_log.assert_not_called()
-        request_data = create_mock_FB_msg()
-        rf = RequestFactory()
-
-        request = rf.post(self.webhook_endpoint, 
-            data = request_data, content_type="application/json")
-        view = FacebookWebhookView()
-
-        view.post(request)
-        mock_log.assert_called_once()
-        mock_log.assert_called_with(request)
-
-
+    @mock.patch("watson_bot.views.FacebookWebhookView.create_message", side_effect=None)
     def test_post_returns_200_with_valid_token(self, *args):
         response = self.client.post(self.webhook_endpoint, 
             create_mock_FB_msg(), content_type="application/json")
         # URL set up in setUp method has to have a valid token as query param to pass
-        self.assertEqual(response.status_code, 200)
-
-    def test_post_returns_200_with_invalid_token(self, *args):
-        URL_WITH_INVALID_QUERY_PARAM  = self.webhook_endpoint[0:-3]
-        response = self.client.post(URL_WITH_INVALID_QUERY_PARAM, 
-            create_mock_FB_msg(), content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
     def test_returns_challenge_token_on_get_request(self, mock_log, *args):
