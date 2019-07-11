@@ -1,0 +1,10 @@
+# Verification token for facebook messenger
+FB_VERIFY_TKN = "d1d892cade69e4dc000b6db0d55d93ea734587e04b01bd0c7a"
+FB_PAGE_ACCESS_TOKEN = ("EAAGGuYZBs8B4BANuAW3Vf0GqDO2xxLZAmRZAls10opZCCTyYkIxD8MW"
+    + "GjAjkuxQtYjVVgTChQs4jYKjCm6LCOl2w3PH7OZChiD71wAyfx3hHzYHwGyDzn6qhu78FAUrkiL"
+    + "y3RtgLm3ETLXkrvurVqMY1ZAhZCv6DLngiTZBEx0aW1QZDZD")
+
+# Auth for Watson Assistant Requests
+WATSON_USERNAME = "apikey"
+WATSON_PASSWORD = "HICbiU3ag0ViUjg3DlZBcHnOVHj5uJYDTwV-CIAB1x7H"
+WATSON_FB_ID = 437600817089858
