@@ -125,6 +125,8 @@ class FacebookWebhookView(View):
         message.text = text
         message.id = id
         message.session = session
+        print("555555555")
+        print(timestamp)
         message.save()
 
         return message
