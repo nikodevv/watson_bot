@@ -22,6 +22,7 @@ FACEBOOK_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages"
 WATSON_ENDPOINT = ("https://gateway.watsonplatform.net/assistant/api/v2/" 
     + "assistants/11c98e51-0aab-4455-a0bd-b64ffe723145/sessions")
 WATSON_API_VER = "version=2019-02-28"
+SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
 
 
 # UTILITY FUNCTIONS
@@ -55,8 +56,20 @@ class FacebookWebhookView(View):
         session = Session()
         session.id = session_id
         session.created_at = timestamp
-        session.last_updated = timestamp
+        session.last_renewed = timestamp
         session.save()
+
+    @staticmethod
+    def renew_session(session_id):
+        timestamp = time.time()
+        session = Session.objects.get(pk=session_id)
+        session.last_renewed = timestamp
+        session.save()
+
+    @staticmethod
+    def should_renew_session(session_id):
+        session = Session.objects.get(pk=session_id)
+        return session.last_renewed + SESSION_TIMEOUT < time.time()
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

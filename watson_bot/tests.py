@@ -85,11 +85,47 @@ class WebhookTest(TestCase):
         # The item was logged as being created within 1 second ago
         timestamp = time.time()
         self.assertTrue(sessions[0].created_at - 1 < timestamp)
-        self.assertTrue(sessions[0].last_updated - 1 < timestamp)
+        self.assertTrue(sessions[0].last_renewed - 1 < timestamp)
         self.assertEqual(sessions[0].id, id)
 
     def test_should_create_session_called_if_no_valid_session_exists(self, *args):
+        self.assertEqual(len(Session.objects.all()),0)
+        timestamp = time.time() - 350 # 5 minutes ago, aka max session exipres
+        session = Session()
+        session.created_at = timestamp
+        session.last_renewed = timestamp
+        session.id = "123"
+        session.save()
         self.fail("Finish test")
+
+    def test_should_renew_session_returns_true_if_max_time_elapsed(self, *args):
+        expired_timestamp = time.time() - 350 # 5 minutes ago, aka max session exipres
+        id = "123507509"
+        session = Session()
+        session.created_at = expired_timestamp
+        session.last_renewed = expired_timestamp
+        session.id = id
+        session.save()
+        self.assertTrue(FacebookWebhookView.should_renew_session(id))
+        session.last_renewed = time.time()
+        session.save()
+        self.assertFalse(FacebookWebhookView.should_renew_session(id))
+
+    def test_renews_session(self, *args):
+        id = "1233415409818931"
+        session = Session()
+        session.id = id
+        session.last_renewed = 1
+        session.created_at = 1
+        session.save()
+
+        session = Session.objects.get(pk=id)
+        self.assertFalse(session.last_renewed + 1 > time.time())
+        self.assertTrue(session.last_renewed < time.time())
+        FacebookWebhookView.renew_session(id)
+        session = Session.objects.get(pk=id)
+        self.assertTrue(session.last_renewed + 1 > time.time())
+        self.assertTrue(session.last_renewed < time.time())
 
 
     def test_accepts_multiple_messgages(self, *args):
