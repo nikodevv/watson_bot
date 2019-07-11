@@ -112,7 +112,22 @@ class FacebookWebhookView(View):
 
 
     def save_message(self, facebook_entry, session):
-        pass
+        sender_id = facebook_entry["messaging"][0]["sender"]["id"]
+        recipient_id = facebook_entry["messaging"][0]["recipient"]["id"]
+        timestamp = facebook_entry["messaging"][0]["timestamp"]
+        text = facebook_entry["messaging"][0]["message"]["text"]
+        id = facebook_entry["messaging"][0]["message"]["mid"]
+
+        message = Message()
+        message.sender_id = sender_id
+        message.recipient_id = recipient_id
+        message.timestamp = timestamp
+        message.text = text
+        message.id = id
+        message.session = session
+        message.save()
+
+        return message
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):

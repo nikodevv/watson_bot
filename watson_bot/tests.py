@@ -18,7 +18,11 @@ def create_mock_FB_msg(json_string=True):
                         "sender" : { "id" : "SENDER_UNIQUE_ID"} ,
                         "recipient" : { "id" : "UNIQUE_RECIPIENT_ID"},
                         "timestamp": time.time(),
-                        "mid": "UNIQUE_MSG_ID"
+                        "mid": "UNIQUE_MSG_ID",
+                        "message" : {
+                            "mid" : "UNIQUE_MESSAAGE_ID",
+                            "text": "Some sser text message lmfao"
+                        }
                     }
                 ]
             }
@@ -163,6 +167,10 @@ class WebhookTest(TestCase):
 
     def test_saves_messages(self, *args):
         session = Session()
+        session.session_id = "RANDOM_SESSION_ID"
+        session.last_renewed = 1
+        session.created_at = 1
+        session.save()
         view = FacebookWebhookView()
         facebook_msg = create_mock_FB_msg(json_string=False)["entry"][0]
 
@@ -170,11 +178,24 @@ class WebhookTest(TestCase):
 
         view.save_message(facebook_msg, session)
         messages = Message.objects.all()
-        self.assertEqual(len(messages), 0)
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].session, session)
         self.assertEqual(messages[0].id, facebook_msg["messaging"][0]["message"]["mid"])
         self.assertEqual(messages[0].text, facebook_msg["messaging"][0]["message"]["text"])
         self.assertEqual(messages[0].sender_id, facebook_msg["messaging"][0]["sender"]["id"])
         self.assertEqual(messages[0].recipient_id, facebook_msg["messaging"][0]["recipient"]["id"])
         
+    def test_save_message_retusn_message(self, *args):
+        session = Session()
+        session.session_id = "RANDOM_SESSION_ID"
+        session.last_renewed = 1
+        session.created_at = 1
+        session.save()
+        view = FacebookWebhookView()
+        facebook_msg = create_mock_FB_msg(json_string=False)["entry"][0]
+
+        self.assertIsInstance(view.save_message(facebook_msg, session), Message)
+        
+
     def test_accepts_multiple_messgages(self, *args):
         self.fail("finish test")
