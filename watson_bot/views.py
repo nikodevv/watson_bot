@@ -37,7 +37,7 @@ def send_message(recipient_id, message):
         headers={"Content-Type": "application/json"},
         data=payload)
     print("facebook post")
-    print(status)
+    print(status.content.decode("utf-8"))
     return status.json()
 
 class FacebookWebhookView(View):
