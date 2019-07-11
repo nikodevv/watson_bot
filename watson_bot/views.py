@@ -1,20 +1,18 @@
 import json
 import requests
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.generic import View
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import time
 from watson_bot.models import Session, Message, Hobby
-from watson_bot.env import (
-    FB_VERIFY_TKN, 
-    WATSON_FB_ID
-    )
 from watson_bot.utilities.watson_interface import WatsonInterface
 
 watson = WatsonInterface()
 SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
+WATSON_FB_ID = 437600817089858 # the user id of the facebook page
+FB_VERIFY_TKN = "d1d892cade69e4dc000b6db0d55d93ea734587e04b01bd0c7a"
 FB_PAGE_ACCESS_TOKEN = (
     "EAAGGuYZBs8B4BACPVaQaJu1tQYjZC2hTDW2PnIlNilB9HGrh87ZBXzbGdUpjK1muwoILz"
     + "VuPZBT8uZABxXbWMVkMWrifmoITLxd8AXTGhD2PHzZCAwmUpLBN9lGt1lYp3otXl27u0"
@@ -141,6 +139,8 @@ class FacebookWebhookView(View):
 
     def post(self, request, *args, **kwargs):
         data = request.body.decode('utf-8')
+        if (request.GET.get('hub.verify_token')) != FB_VERIFY_TKN:
+            return HttpResponseBadRequest() 
         if (data == None or data == ""):
             return HttpResponse("EVENT_RECIEVED")
         json_data = json.loads(data)

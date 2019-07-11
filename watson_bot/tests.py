@@ -4,7 +4,7 @@ from unittest import mock
 import time
 from django.test.client import RequestFactory
 from .views import FacebookWebhookView
-from watson_bot.env import FB_VERIFY_TKN, WATSON_FB_ID
+from watson_bot.views import FB_VERIFY_TKN, WATSON_FB_ID
 from watson_bot.models import Message, Session
 
 def create_mock_FB_msg(json_string=True):
