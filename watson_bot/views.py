@@ -140,6 +140,7 @@ class FacebookWebhookView(View):
         data = { "input" : {message_txt} }
         response = session.post(
             f'{WATSON_ENDPOINT}/{session_id}/message?{WATSON_API_VER}', 
+            headers={"Content-Type": "application/json"},
             data=data)
         print("WATSON RESPONSE:")
         print(response.content.decode("utf-8"))
