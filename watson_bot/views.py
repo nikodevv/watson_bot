@@ -92,7 +92,7 @@ class FacebookWebhookView(View):
 
         print("3333333")
         if (len(recent_msgs) == 0):
-            session_id = watson.create_session["session_id"]
+            session_id = watson.create_session()["session_id"]
             session = self.save_session(session_id)
 
         elif (self.should_renew_session(recent_msgs[0].session) == False):
