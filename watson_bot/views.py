@@ -88,7 +88,7 @@ class FacebookWebhookView(View):
 
     def create_message(self, facebook_entry):
         min_timestamp_before_timeout = time.time() - SESSION_TIMEOUT
-        sender_id = get_sender_id(facebook_entry)
+        sender_id = self.get_sender_id(facebook_entry)
 
         recent_msgs = Message.objects.filter(
             timestamp__gt=min_timestamp_before_timeout,
@@ -108,7 +108,8 @@ class FacebookWebhookView(View):
             session = recent_msgs[0].session
             self.renew_session(session.id)
 
-        self.save_message(facebook_entry, session)
+        message = self.save_message(facebook_entry, session)
+        self.send_message_to_watson(message.text, session.session_id)
 
 
     def save_message(self, facebook_entry, session):
@@ -129,14 +130,21 @@ class FacebookWebhookView(View):
 
         return message
 
+    def send_message_to_watson(self, message_txt, session_id):
+        session = requests.Session()
+        session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
+        data = { "input" : {message_txt} }
+        response = session.post(f'{WATSON_ENDPOINT}/{session_id}/message?{WATSON_API_VER}')
+        self.log(response)
+        return response
+
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        self.log(request)
-        self.create_watson_session()
+        self.create_message(data["entry"][0])
         return HttpResponse("EVENT_RECIEVED")
 
     def get(self, request, *args, **kwargs):

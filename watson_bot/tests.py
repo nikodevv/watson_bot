@@ -108,15 +108,16 @@ class WebhookTest(TestCase):
         session = FacebookWebhookView().save_session(id)
         self.assertIsInstance(session, Session)
 
-    def test_should_create_session_called_if_no_valid_session_exists(self, *args):
-        self.assertEqual(len(Session.objects.all()),0)
-        timestamp = time.time() - 350 # 5 minutes ago, aka max session exipres
-        session = Session()
-        session.created_at = timestamp
-        session.last_renewed = timestamp
-        session.id = "123"
-        session.save()
-        self.fail("Finish test")
+    def test_create_message_creates_session(
+        self, 
+        _, 
+        mock_create_session, 
+        mock_watson_create_session, 
+        *args):
+        """
+        Tests that a creaing a message will create a session for said messaage only when such a session is required.
+        """
+        self.fail("Have to create quite a lot of Mock methods to unit test. Not worth it for a little demo!")
 
     def test_should_renew_session_returns_true_if_max_time_elapsed(self, *args):
         view = FacebookWebhookView()
@@ -195,7 +196,3 @@ class WebhookTest(TestCase):
         facebook_msg = create_mock_FB_msg(json_string=False)["entry"][0]
 
         self.assertIsInstance(view.save_message(facebook_msg, session), Message)
-        
-
-    def test_accepts_multiple_messgages(self, *args):
-        self.fail("finish test")
