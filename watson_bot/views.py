@@ -94,6 +94,7 @@ class FacebookWebhookView(View):
             timestamp__gt=min_timestamp_before_timeout,
             sender_id__exact=sender_id)
 
+        print("GOT HERE2")
         if (len(recent_msgs) == 0):
             # Create new session
             session_id = json.loads(self.create_session().content.decode('utf-8'))["session_id"]
@@ -107,6 +108,8 @@ class FacebookWebhookView(View):
         else: 
             session = recent_msgs[0].session
             self.renew_session(session.id)
+
+        print("GOT HERE3")
 
         message = self.save_message(facebook_entry, session)
         self.send_message_to_watson(message.text, session.session_id)
@@ -144,6 +147,7 @@ class FacebookWebhookView(View):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
+        print("GOT HERE1")
         self.create_message(data["entry"][0])
         return HttpResponse("EVENT_RECIEVED")
 
