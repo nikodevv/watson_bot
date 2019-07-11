@@ -2,6 +2,7 @@ import json
 import requests
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.views.generic import View
+from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import time
@@ -116,7 +117,11 @@ class FacebookWebhookView(View):
                         hobby.created_at = time.time()
                         hobby.user = sender_id
                         hobby.value = entity["value"]
-                        hobby.save()
+                        try: 
+                            hobby.save()
+                        except IntegrityError:
+                            # Duplicate user-hobby entries are not logged.
+                            pass
 
     def save_message(self, facebook_entry, session):
         sender_id = facebook_entry["messaging"][0]["sender"]["id"]
