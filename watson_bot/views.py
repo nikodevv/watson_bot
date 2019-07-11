@@ -148,7 +148,7 @@ class FacebookWebhookView(View):
         if (data == None or data == ""):
             return HttpResponse("EVENT_RECIEVED")
         json_data = json.loads(data)
-        self.create_message(data["entry"][0])
+        self.create_message(json_data["entry"][0])
         return HttpResponse("EVENT_RECIEVED")
 
     def get(self, request, *args, **kwargs):
