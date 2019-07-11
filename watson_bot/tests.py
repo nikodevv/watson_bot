@@ -43,7 +43,7 @@ class MiscTests(TestCase):
 
 # Facebook requests are mocked
 @mock.patch('watson_bot.views.send_message', side_effect=None)
-@mock.patch('watson_bot.views.FacebookWebhookView.create_session', return_value="uniqueSessionId", side_effect=None)
+@mock.patch('watson_bot.views.WatsonInterface')
 @mock.patch('watson_bot.views.FacebookWebhookView.log', side_effect=None)
 class WebhookTest(TestCase):
 

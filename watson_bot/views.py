@@ -10,20 +10,18 @@ from watson_bot.models import Session, Message, Hobby
 from watson_bot.env import (
     FB_VERIFY_TKN, 
     FB_PAGE_ACCESS_TOKEN, 
-    WATSON_PASSWORD, 
-    WATSON_USERNAME,
     WATSON_FB_ID
     )
+from watson_bot.utilities.watson_interface import WatsonInterface
 
 # CONFIG
 logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 # CONSTANTS
 FACEBOOK_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages"
-WATSON_ENDPOINT = ("https://gateway.watsonplatform.net/assistant/api/v2/" 
-    + "assistants/11c98e51-0aab-4455-a0bd-b64ffe723145/sessions")
-WATSON_API_VER = "version=2019-02-28"
 SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
+
+watson = WatsonInterface()
 
 
 # UTILITY FUNCTIONS
@@ -78,11 +76,6 @@ class FacebookWebhookView(View):
                 return False
         return True
 
-    def create_session(self):
-        session = requests.Session()
-        session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
-        return session.post(f'{WATSON_ENDPOINT}?{WATSON_API_VER}')
-
     def get_sender_id(self, facebook_entry):
         for obj in facebook_entry["messaging"]:
             if "sender" in obj:
@@ -105,9 +98,8 @@ class FacebookWebhookView(View):
             session = self.save_session(session_id)
 
         elif (self.should_renew_session(recent_msgs[0].session) == False):
-            print("CONDITION 2")
             # Create new session
-            session_id = json.loads(self.create_session().content.decode('utf-8'))["session_id"]
+            session_id = watson.create_session()["session_id"]
             session = self.save_session(session_id)
         
         else: 
@@ -118,7 +110,7 @@ class FacebookWebhookView(View):
 
         print("4444444")
         message = self.save_message(facebook_entry, session)
-        watson_response = self.send_message_to_watson(message.text, session.session_id)
+        watson_response = watson.send_message(message.text, session.session_id)
         self.save_watson_response(watson_response, sender_id)
         send_message(sender_id, watson_response["generic"][0]["text"])
 
