@@ -92,9 +92,7 @@ class FacebookWebhookView(View):
 
         print("3333333")
         if (len(recent_msgs) == 0):
-            print("CONDDITION 1")
-            # Create new session
-            session_id = json.loads(self.create_session().content.decode('utf-8'))["session_id"]
+            session_id = watson.create_session["session_id"]
             session = self.save_session(session_id)
 
         elif (self.should_renew_session(recent_msgs[0].session) == False):
@@ -145,19 +143,6 @@ class FacebookWebhookView(View):
         message.save()
 
         return message
-
-    def send_message_to_watson(self, message_txt, session_id):
-        session = requests.Session()
-        session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
-        data = { "input" : {"text" : message_txt} }
-        print(data)
-        response = session.post(
-            f'{WATSON_ENDPOINT}/{session_id}/message?{WATSON_API_VER}', 
-            json=data)
-        print("WATSON RESPONSE:")
-        print(response.content.decode("utf-8"))
-        self.log(response.status_code)
-        return json.loads(response.content.decode("utf-8"))["output"]
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
