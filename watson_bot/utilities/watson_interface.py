@@ -32,4 +32,5 @@ class WatsonInterface:
         """
         session = requests.Session()
         session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
-        return json.loads(session.post(f'{WATSON_ENDPOINT}?{WATSON_API_VER}'))
+        response = session.post(f'{WATSON_ENDPOINT}?{WATSON_API_VER}')
+        return json.loads(response.content.decode("utf-8"))
