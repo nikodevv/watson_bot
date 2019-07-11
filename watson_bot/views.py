@@ -43,11 +43,6 @@ class FacebookWebhookView(View):
     def log(self, request):
         logging.getLogger("djangosyslog").info(request)
 
-    def create_watson_session(self):
-        session = requests.Session()
-        session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
-        print(session.post(f'{WATSON_ENDPOINT}?{WATSON_API_VER}').content)
-
     def save_session(self, session_id):
         timestamp = time.time()
 
@@ -94,7 +89,6 @@ class FacebookWebhookView(View):
             timestamp__gt=min_timestamp_before_timeout,
             sender_id__exact=sender_id)
 
-        print("GOT HERE2")
         if (len(recent_msgs) == 0):
             # Create new session
             session_id = json.loads(self.create_session().content.decode('utf-8'))["session_id"]
@@ -108,8 +102,6 @@ class FacebookWebhookView(View):
         else: 
             session = recent_msgs[0].session
             self.renew_session(session.id)
-
-        print("GOT HERE3")
 
         message = self.save_message(facebook_entry, session)
         self.send_message_to_watson(message.text, session.session_id)
@@ -147,7 +139,6 @@ class FacebookWebhookView(View):
 
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
-        print("GOT HERE1")
         self.create_message(data["entry"][0])
         return HttpResponse("EVENT_RECIEVED")
 
