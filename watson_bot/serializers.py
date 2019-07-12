@@ -19,7 +19,7 @@ class MessageSerializer(serializers.Serializer):
         instance.text = validated_data.get('text', instance.text)
         return instance
 
-class HobbySerializer(serializers.serializer):
+class HobbySerializer(serializers.Serializer):
     created_at = serializers.DecimalField(read_only=True, max_digits=13, decimal_places=3)
     user = serializers.CharField(read_only=True)
     value = serializers.CharField(read_only=True)
