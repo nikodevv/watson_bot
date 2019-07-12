@@ -1,16 +1,14 @@
-import json
-import requests
+import json, requests, time
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.generic import View
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-import time
 from watson_bot.models import Session, Message, Hobby
 from watson_bot.utilities.watson_interface import WatsonInterface
 from watson_bot.serializers import MessageSerializer, HobbySerializer
 
-watson = WatsonInterface()
+watson = WatsonInterface() # Makes calls to watson API
 SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
 WATSON_FB_ID = 437600817089858 # the user id of the facebook page
 FB_VERIFY_TKN = "d1d892cade69e4dc000b6db0d55d93ea734587e04b01bd0c7a"
@@ -20,6 +18,9 @@ FB_PAGE_ACCESS_TOKEN = (
     + "l5TzCUf5Jh1bbhZCMWKrpJUcArJyPMtdqipAZDZD")
 
 def send_message(recipient_id, message):
+    """
+    Sends a message to a facebook user
+    """
     endpoint = f"https://graph.facebook.com/v2.6/me/messages?access_token={FB_PAGE_ACCESS_TOKEN}"
     payload = json.dumps({
             "messaging_type": "RESPONSE",
@@ -35,6 +36,9 @@ def send_message(recipient_id, message):
 class FacebookWebhookView(View):
 
     def save_session(self, session_id):
+        """
+        Instanties a Session model and saves it to database
+        """
         timestamp = time.time()
 
         session = Session()
@@ -45,16 +49,25 @@ class FacebookWebhookView(View):
         return session
 
     def renew_session(self, session_id):
+        """
+        Renews session metadata in the database.
+        """
         timestamp = time.time()
         session = Session.objects.get(pk=session_id)
         session.last_renewed = timestamp
         session.save()
 
     def should_renew_session(self, session):
+        """
+        Returns true if the session can be renewed.
+        """
         return session.last_renewed + SESSION_TIMEOUT > time.time()
 
 
     def should_create_message(self, facebook_entry):
+        """
+        Returns true if the the sender of the facebook message JSON is not the watson bot.
+        """
         for indx, obj in enumerate(facebook_entry["messaging"]):
             if "sender" in obj and obj["sender"] == WATSON_FB_ID:
                 # if the sender is the bot messages are saved when they are sent
@@ -63,11 +76,17 @@ class FacebookWebhookView(View):
         return True
 
     def get_sender_id(self, facebook_entry):
+        """
+        Returns the sender id from a facebook message JSON
+        """
         for obj in facebook_entry["messaging"]:
             if "sender" in obj:
                 return obj["sender"]["id"]
 
     def create_message(self, facebook_entry):
+        """
+        Calls build steps for saving a facebook message.
+        """
         min_timestamp_before_timeout = time.time() - SESSION_TIMEOUT
         sender_id = self.get_sender_id(facebook_entry)
 
@@ -111,6 +130,9 @@ class FacebookWebhookView(View):
                             pass
 
     def save_message(self, facebook_entry, session):
+        """
+        Instantiates a message model and saves it to database.
+        """
         sender_id = facebook_entry["messaging"][0]["sender"]["id"]
         recipient_id = facebook_entry["messaging"][0]["recipient"]["id"]
         timestamp = round(facebook_entry["messaging"][0]["timestamp"]/1000)

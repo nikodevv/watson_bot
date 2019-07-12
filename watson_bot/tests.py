@@ -87,16 +87,6 @@ class WebhookTest(TestCase):
         session = FacebookWebhookView().save_session(id)
         self.assertIsInstance(session, Session)
 
-    def test_create_message_creates_session(
-        self, 
-        mock_create_session, 
-        mock_watson_create_session, 
-        *args):
-        """
-        Tests that a creaing a message will create a session for said messaage only when such a session is required.
-        """
-        self.fail("Have to create quite a lot of Mock methods to unit test. Not worth it for a little demo!")
-
     def test_should_renew_session_returns_true_if_max_time_elapsed(self, *args):
         view = FacebookWebhookView()
         expired_timestamp = time.time() - 350 # 5 minutes ago, aka max session exipres
