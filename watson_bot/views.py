@@ -35,6 +35,22 @@ def send_message(recipient_id, message):
 
 class FacebookWebhookView(View):
 
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = request.body.decode('utf-8')
+        if (data == None or data == ""):
+            return HttpResponse("EVENT_RECIEVED")
+        json_data = json.loads(data)
+        self.create_message(json_data["entry"][0])
+        return HttpResponse("EVENT_RECIEVED")
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(request.GET.get('hub.challenge'))
+
+    # Utility methods #
     def save_session(self, session_id):
         """
         Instanties a Session model and saves it to database
@@ -150,30 +166,10 @@ class FacebookWebhookView(View):
 
         return message
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        data = request.body.decode('utf-8')
-        if (data == None or data == ""):
-            return HttpResponse("EVENT_RECIEVED")
-        json_data = json.loads(data)
-        self.create_message(json_data["entry"][0])
-        return HttpResponse("EVENT_RECIEVED")
-
-    def get(self, request, *args, **kwargs):
-        return HttpResponse(request.GET.get('hub.challenge'))
-
-class DjangoRunsView(View):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-    def get(self, requuest, *args, **kwargs):
-        return HttpResponse("App is live.")
-
 class MessageView(View):
+    """
+    API view for messages
+    """
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -184,6 +180,9 @@ class MessageView(View):
         return JsonResponse(serializer.data, safe=False)
 
 class HobbyView(View):
+    """
+    API view for hobbies
+    """
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
@@ -192,3 +191,13 @@ class HobbyView(View):
         hobbies = Hobby.objects.all()
         serializer = HobbySerializer(hobbies, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+# Homepage
+class DjangoRunsView(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, requuest, *args, **kwargs):
+        return HttpResponse("App is live.")
