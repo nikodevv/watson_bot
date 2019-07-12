@@ -5,7 +5,7 @@ class MessageSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)
     sender_id = serializers.CharField(read_only=True)
     recipient_id = serializers.CharField(read_only=True)
-    timestamp = serializers.DecimalField(read_only=True)
+    timestamp = serializers.DecimalField(read_only=True, max_digits=13, decimal_places=3)
     text = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
