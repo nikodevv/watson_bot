@@ -1,0 +1,12 @@
+As a user I visit a facebook link to chat with bot.
+
+I enter in a Greeting "Hi there", and the bot greets me back.
+
+The bot asks me a question about my hobby.
+
+I tell the bot "My hobby is watching basketball".
+
+The bot saves my hobby to the database.
+
+
+
