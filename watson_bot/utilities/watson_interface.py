@@ -16,12 +16,9 @@ class WatsonInterface:
         session = requests.Session()
         session.auth = (WATSON_USERNAME, WATSON_PASSWORD)
         data = { "input" : {"text" : message_txt} }
-        print(data)
         response = session.post(
             f'{WATSON_ENDPOINT}/{session_id}/message?{WATSON_API_VER}', 
             json=data)
-        print("WATSON RESPONSE:")
-        print(response.content.decode("utf-8"))
         return json.loads(response.content.decode("utf-8"))["output"]
 
 
