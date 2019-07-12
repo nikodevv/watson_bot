@@ -139,13 +139,6 @@ class FacebookWebhookView(View):
 
     def post(self, request, *args, **kwargs):
         data = request.body.decode('utf-8')
-        print(request)
-        print(data)
-        print(request.path)
-        print(request.GET)
-        if (request.GET.get('hub.verify_token')) != FB_VERIFY_TKN:
-            print('verify token wasnt here')
-            return HttpResponseBadRequest() 
         if (data == None or data == ""):
             return HttpResponse("EVENT_RECIEVED")
         json_data = json.loads(data)
