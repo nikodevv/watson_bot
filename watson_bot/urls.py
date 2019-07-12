@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import re_path
-from .views import FacebookWebhookView, DjangoRunsView
+from watson_bot.views import FacebookWebhookView, DjangoRunsView, MessageView
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     re_path(r'webhook', FacebookWebhookView.as_view(), name="webhook"),
+    re_path(r'api/messages', MessageView.as_view(), name="list_messages"),
     re_path('', DjangoRunsView.as_view(), name="homepage"),
 ]

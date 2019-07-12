@@ -1,6 +1,6 @@
 import json
 import requests
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.views.generic import View
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 import time
 from watson_bot.models import Session, Message, Hobby
 from watson_bot.utilities.watson_interface import WatsonInterface
+from watson_bot.serializers import MessageSerializer
 
 watson = WatsonInterface()
 SESSION_TIMEOUT = 5*60 - 10 # Session timeout after this long
@@ -149,3 +150,13 @@ class DjangoRunsView(View):
 
     def get(self, requuest, *args, **kwargs):
         return HttpResponse("App is live.")
+
+class MessageView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, requuest, *args, **kwargs):
+        msgs = Message.objects.all()
+        serializer = MessageSerializer(msgs, many=True)
+        return JsonResponse(serializer.data, safe=False)

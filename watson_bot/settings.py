@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'watson_bot'
+    'watson_bot',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
