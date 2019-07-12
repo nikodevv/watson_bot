@@ -140,7 +140,7 @@ class FacebookWebhookView(View):
     def post(self, request, *args, **kwargs):
         data = request.body.decode('utf-8')
         print(request)
-        print(request.content.decode("utf-8"))
+        print(data)
         print(request.path)
         print(request.GET)
         if (request.GET.get('hub.verify_token')) != FB_VERIFY_TKN:
