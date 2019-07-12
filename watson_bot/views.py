@@ -4,6 +4,7 @@ from django.views.generic import View
 from django.db.utils import IntegrityError
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+
 from watson_bot.models import Session, Message, Hobby
 from watson_bot.utilities.watson_interface import WatsonInterface
 from watson_bot.serializers import MessageSerializer, HobbySerializer

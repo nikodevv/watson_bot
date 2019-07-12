@@ -1,8 +1,8 @@
-from django.test import TestCase
-import json
+import json, time
 from unittest import mock
-import time
 from django.test.client import RequestFactory
+from django.test import TestCase
+
 from .views import FacebookWebhookView
 from watson_bot.views import FB_VERIFY_TKN, WATSON_FB_ID
 from watson_bot.models import Message, Session

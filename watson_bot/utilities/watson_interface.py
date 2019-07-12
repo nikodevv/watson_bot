@@ -8,6 +8,9 @@ WATSON_ENDPOINT = ("https://gateway.watsonplatform.net/assistant/api/v2/"
     + "assistants/11c98e51-0aab-4455-a0bd-b64ffe723145/sessions")
 
 class WatsonInterface:
+    """
+    Interface for interacting with watson assistant API.
+    """
     
     def send_message(self, message_txt, session_id):
         """
