@@ -2,11 +2,11 @@ from rest_framework import serializers
 from watson_bot.models import Message, Hobby
 
 class MessageSerializer(serializers.Serializer):
-    id = serializers.TextField(read_only=True)
-    sender_id = serializers.TextField(read_only=True)
-    recipient_id = serializers.TextField(read_only=True)
+    id = serializers.CharField(read_only=True)
+    sender_id = serializers.CharField(read_only=True)
+    recipient_id = serializers.CharField(read_only=True)
     timestamp = serializers.DecimalField(read_only=True)
-    text = serializers.TextField(read_only=True)
+    text = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
         return Message.objects.create(**validated_data)
